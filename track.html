@@ -1,3 +1,63 @@
-<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Track My Shorties</title><style>:root{--b:#351811;--g:#d8b35d;--bg:#ead7a1;--c:#fff2cf}*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;background:linear-gradient(135deg,var(--bg),#f6e7ba);font-family:Arial,sans-serif;color:var(--b)}.box{width:min(92%,620px);background:var(--c);padding:38px;border-radius:32px;box-shadow:0 30px 70px #35181125}h1{font-size:44px;margin:0 0 8px}.lookup{display:flex;gap:8px;margin:25px 0}.lookup input{flex:1;padding:14px;border:2px solid #35181122;border-radius:99px;background:white}.lookup button{border:0;border-radius:99px;padding:0 20px;background:var(--b);color:var(--c);font-weight:800}.status{background:var(--b);color:var(--c);border-radius:24px;padding:28px;margin-top:20px}.status h2{font-size:30px;margin:0 0 8px}.steps{display:flex;justify-content:space-between;margin-top:24px;gap:5px}.step{height:8px;flex:1;border-radius:9px;background:#ffffff30}.step.on{background:var(--g)}a{color:inherit}</style></head><body><div class='box'><a href='index.html'>← SHORT & SWEET</a><h1>Track my Shorties.</h1><p>Enter your order number to see what your little troublemakers are doing.</p><div class='lookup'><input id='id' value='SS1042' placeholder='Order number'><button onclick='show()'>Track</button></div><div id='result'></div></div><script>
-const defaults=[{id:'SS1042',name:'Sara',status:'new'},{id:'SS1043',name:'Maya',status:'baking'}];const copy={new:['Order received!','We got your order! 🤎'],accepted:["YAY! It's accepted ✨",'Your Shorties have officially entered the queue.'],baking:['Shorties getting made! 🍪','Chocolatey business is happening right now.'],delivery:['Shorties are running your way! 🏃🍪','They have left the kitchen and are coming for you.'],delivered:['Shorties have landed! 🤎','Enjoyyy — try not to finish them all at once.']};const rank={new:0,accepted:1,baking:2,delivery:3,delivered:4};function orders(){return JSON.parse(localStorage.getItem('ss_orders')||JSON.stringify(defaults))}function show(){let id=document.getElementById('id').value.trim().toUpperCase(),o=orders().find(x=>x.id===id),r=document.getElementById('result');if(!o){r.innerHTML='<p>Hmm… we can’t find that order. Check the number and try again.</p>';return}let c=copy[o.status]||copy.new;r.innerHTML=`<div class='status'><small>ORDER #${o.id}</small><h2>${c[0]}</h2><p>${c[1]}</p><div class='steps'>${[0,1,2,3,4].map(i=>`<span class='step ${i<=rank[o.status]?'on':''}'></span>`).join('')}</div></div>`}show();setInterval(show,3000);
-</script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Track My Shorties — Short & Sweet</title>
+<style>
+:root{--brown:#351811;--gold:#d8b35d;--beige:#ead7a1;--cream:#fff2cf;--white:#fff;--muted:#7b6258}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:linear-gradient(135deg,var(--beige),#f6e7ba);font-family:Arial,sans-serif;color:var(--brown)}
+.wrap{width:min(92%,720px);margin:0 auto;padding:44px 0 70px}.back{display:inline-block;margin-bottom:30px;font-weight:800;text-decoration:none;color:var(--brown)}
+.card{background:var(--cream);padding:38px;border-radius:32px;box-shadow:0 30px 70px #35181125}h1{font-size:clamp(38px,8vw,58px);line-height:.95;margin:0 0 12px;letter-spacing:-2px}
+.lead{font-size:18px;line-height:1.6;color:#5f443b}.lookup{display:flex;gap:10px;margin:28px 0}.lookup input{flex:1;min-width:0;padding:15px 18px;border:2px solid #35181122;border-radius:999px;background:white;font-size:16px;text-transform:uppercase}
+.lookup button{border:0;border-radius:999px;padding:0 24px;background:var(--brown);color:var(--cream);font-weight:900;cursor:pointer}.message{padding:17px 20px;border-radius:18px;background:#fff8e8;margin-top:18px;line-height:1.5}
+.status{background:var(--brown);color:var(--cream);border-radius:26px;padding:28px;margin-top:20px}.status-top{display:flex;justify-content:space-between;gap:18px;align-items:flex-start}.status h2{font-size:31px;margin:8px 0}.paid{background:var(--gold);color:var(--brown);padding:7px 11px;border-radius:999px;font-size:12px;font-weight:900;white-space:nowrap}
+.steps{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin:25px 0 10px}.step{height:8px;border-radius:9px;background:#ffffff30}.step.on{background:var(--gold)}.labels{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;font-size:9px;text-align:center;opacity:.7}.meta{margin-top:18px;padding-top:18px;border-top:1px solid #ffffff22;font-size:14px;line-height:1.7}
+.note{margin-top:20px;font-size:12px;color:var(--muted);line-height:1.5}.home-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.pill{display:inline-block;text-decoration:none;border-radius:999px;padding:12px 16px;font-weight:800;background:white;color:var(--brown)}
+@media(max-width:600px){.card{padding:26px}.lookup{flex-direction:column}.lookup button{padding:14px}.labels{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="index.html">← SHORT & SWEET</a>
+<div class="card">
+<h1>Track my Shorties.</h1>
+<p class="lead">Enter your paid order number to see exactly what your Shorties are up to.</p>
+<div class="lookup"><input id="id" placeholder="e.g. SS1042" autocomplete="off"><button onclick="show()">Track</button></div>
+<div id="result"></div>
+<p class="note">Test mode: tracking currently works with orders created on this same browser/device. The page is ready to connect to the shared online order database next.</p>
+</div>
+</div>
+<script>
+const copy={
+  paid:["Payment confirmed 🤎","Your order is paid and safely in our system."],
+  accepted:["YAY! Your order’s been accepted ✨","Your Shorties have officially entered the queue."],
+  baking:["Your Shorties are getting made! 🍪","Chocolatey business is happening right now."],
+  ready:["Your Shorties are dressed & ready 🤎","Everything is packed and ready for the next step."],
+  delivery:["Your Shorties are running your way! 🏃🍪","They have left the kitchen and are coming for you."],
+  delivered:["Shorties have landed. Enjoyyy! 🤎","Delivered! Try not to finish them all at once."]
+};
+const rank={paid:0,accepted:1,baking:2,ready:3,delivery:4,delivered:5};
+const labels=["Paid","Accepted","Baking","Ready","On the way","Delivered"];
+function orders(){try{return JSON.parse(localStorage.getItem("ss_orders")||"[]")}catch(e){return[]}}
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]))}
+function show(){
+  const id=document.getElementById("id").value.trim().toUpperCase();
+  const r=document.getElementById("result");
+  if(!id){r.innerHTML='<div class="message">Enter your order number first.</div>';return}
+  const o=orders().find(x=>String(x.id).toUpperCase()===id);
+  if(!o){r.innerHTML='<div class="message">We can’t find that order on this device. Check the number and try again.</div>';return}
+  if(!o.paid){r.innerHTML='<div class="message">This order has not been marked as paid yet, so tracking is not active.</div>';return}
+  const state=copy[o.status]?o.status:"paid", c=copy[state], pos=rank[state]??0;
+  r.innerHTML=`<div class="status">
+    <div class="status-top"><div><small>ORDER #${esc(o.id)}</small><h2>${c[0]}</h2><p>${c[1]}</p></div><span class="paid">PAID ✓</span></div>
+    <div class="steps">${labels.map((_,i)=>`<span class="step ${i<=pos?"on":""}"></span>`).join("")}</div>
+    <div class="labels">${labels.map(x=>`<span>${x}</span>`).join("")}</div>
+    <div class="meta">${o.name?`<div><b>Customer:</b> ${esc(o.name)}</div>`:""}${o.items?`<div><b>Order:</b> ${esc(o.items)}</div>`:""}${o.total?`<div><b>Total:</b> ${esc(o.total)}</div>`:""}</div>
+  </div><div class="home-actions"><a class="pill" href="index.html">Back to shop</a></div>`;
+}
+const q=new URLSearchParams(location.search).get("order");if(q){document.getElementById("id").value=q;show()}
+document.getElementById("id").addEventListener("keydown",e=>{if(e.key==="Enter")show()});
+</script>
+</body>
+</html>
