@@ -1,10 +1,79 @@
-<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Short & Sweet — Orders</title><style>
-:root{--b:#351811;--g:#d8b35d;--bg:#ead7a1;--c:#fff2cf;--m:#6a5956}*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--b)}header{background:var(--b);color:var(--c);padding:22px 5%;display:flex;justify-content:space-between;align-items:center}main{max-width:1100px;margin:auto;padding:38px 24px}h1{font-size:48px;margin:0 0 8px}.sub{opacity:.75}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:28px}.order{background:var(--c);padding:24px;border-radius:24px;box-shadow:0 10px 30px #35181118}.top{display:flex;justify-content:space-between;gap:12px}.badge{background:var(--g);padding:7px 11px;border-radius:99px;font-size:12px;font-weight:800}.details{line-height:1.7;margin:15px 0}.buttons{display:flex;gap:8px;flex-wrap:wrap}.buttons button{border:0;border-radius:99px;padding:11px 14px;font-weight:800;cursor:pointer;background:#fff;color:var(--b)}.buttons button.active{background:var(--b);color:var(--c)}.note{font-size:12px;opacity:.65;margin-top:16px}@media(max-width:700px){.grid{grid-template-columns:1fr}h1{font-size:38px}}</style></head><body>
-<header><strong>SHORT & SWEET ✦ ADMIN</strong><a href='index.html' style='color:#fff2cf'>View shop</a></header><main><h1>Orders</h1><div class='sub'>Tap a status and the customer's tracker updates instantly on this device.</div><div id='orders' class='grid'></div></main>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Short & Sweet — Orders Admin</title>
+<style>
+:root{--brown:#351811;--gold:#d8b35d;--beige:#ead7a1;--cream:#fff2cf;--muted:#6a5956}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:var(--beige);color:var(--brown)}header{background:var(--brown);color:var(--cream);padding:22px 5%;display:flex;justify-content:space-between;gap:20px;align-items:center}
+header a{color:var(--cream);text-decoration:none}main{max-width:1180px;margin:auto;padding:38px 24px 70px}h1{font-size:clamp(40px,6vw,62px);margin:0 0 6px;letter-spacing:-2px}.sub{opacity:.75;line-height:1.5}.notice{background:#fff5d7;border:1px solid #d8b35d;padding:15px 18px;border-radius:18px;margin:22px 0;font-weight:700}
+.panel{background:var(--cream);padding:24px;border-radius:26px;margin:24px 0;box-shadow:0 10px 30px #35181112}.panel h2{margin-top:0}.form{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.form input,.form select{width:100%;padding:13px 14px;border:1px solid #35181122;background:white;border-radius:14px;font:inherit}.form .full{grid-column:1/-1}.primary{border:0;background:var(--brown);color:var(--cream);padding:13px 17px;border-radius:999px;font-weight:900;cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:28px}.order{background:var(--cream);padding:24px;border-radius:24px;box-shadow:0 10px 30px #35181118}.top{display:flex;justify-content:space-between;gap:12px}.badge{background:var(--gold);padding:7px 11px;border-radius:999px;font-size:12px;font-weight:900}.unpaid{background:#ead8d1}.details{line-height:1.7;margin:15px 0}.buttons{display:flex;gap:8px;flex-wrap:wrap}.buttons button{border:0;border-radius:999px;padding:10px 12px;font-weight:800;cursor:pointer;background:#fff;color:var(--brown)}.buttons button.active{background:var(--brown);color:var(--cream)}.danger{margin-top:14px;background:transparent;border:0;text-decoration:underline;cursor:pointer;color:#805145}.empty{padding:30px;background:#ffffff55;border-radius:20px;text-align:center}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.form{grid-template-columns:1fr}.form .full{grid-column:auto}}
+</style>
+</head>
+<body>
+<header><strong>SHORT & SWEET ✦ ADMIN</strong><div><a href="index.html">Shop</a> &nbsp;·&nbsp; <a href="track.html">Tracker</a></div></header>
+<main>
+<h1>Orders</h1>
+<div class="sub">Create a test paid order, then update its status. The customer tracker on this same browser updates immediately.</div>
+<div class="notice">TEST MODE — these orders are saved only in this browser. This is not yet the shared customer database.</div>
+
+<section class="panel">
+<h2>Create a test order</h2>
+<div class="form">
+<input id="name" placeholder="Customer name">
+<input id="phone" placeholder="Phone">
+<input id="total" placeholder="Total e.g. AED 80">
+<input id="items" class="full" placeholder="Order details e.g. Box of 10 Shorties">
+<select id="paid"><option value="true">Paid ✓</option><option value="false">Not paid</option></select>
+<button class="primary" onclick="createOrder()">Create order</button>
+</div>
+</section>
+
+<div id="orders" class="grid"></div>
+</main>
 <script>
-const defaults=[{id:'SS1042',name:'Sara',phone:'+971 50 000 0000',items:'12 × Classic Shorties',total:'AED 100',status:'new'},{id:'SS1043',name:'Maya',phone:'+971 50 000 0001',items:'Mini Shorties Box',total:'AED 85',status:'baking'}];
-const statuses=[['accepted','Accept order'],['baking','Start baking'],['delivery','Out for delivery'],['delivered','Delivered']];
-function data(){return JSON.parse(localStorage.getItem('ss_orders')||JSON.stringify(defaults))}function save(x){localStorage.setItem('ss_orders',JSON.stringify(x));render()}
-function setStatus(id,s){let x=data();x.find(o=>o.id===id).status=s;save(x)}
-function render(){document.getElementById('orders').innerHTML=data().map(o=>`<div class='order'><div class='top'><div><b>Order #${o.id}</b><br><small>${o.name} · ${o.phone}</small></div><span class='badge'>${o.status.toUpperCase()}</span></div><div class='details'>${o.items}<br><b>${o.total}</b></div><div class='buttons'>${statuses.map(s=>`<button class='${o.status===s[0]?'active':''}' onclick="setStatus('${o.id}','${s[0]}')">${s[1]}</button>`).join('')}</div><div class='note'>Demo status controls. Real WhatsApp/SMS sending requires connecting a messaging provider.</div></div>`).join('')}render();
-</script></body></html>
+const statuses=[["paid","Paid"],["accepted","Accepted"],["baking","Baking"],["ready","Ready"],["delivery","Out for delivery"],["delivered","Delivered"]];
+function data(){try{return JSON.parse(localStorage.getItem("ss_orders")||"[]")}catch(e){return[]}}
+function save(x){localStorage.setItem("ss_orders",JSON.stringify(x));render()}
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]))}
+function nextId(){
+  const existing=data().map(o=>parseInt(String(o.id||"").replace(/\D/g,""),10)).filter(Number.isFinite);
+  const n=Math.max(1041,...existing)+1;return "SS"+n;
+}
+function createOrder(){
+  const name=document.getElementById("name").value.trim();
+  const phone=document.getElementById("phone").value.trim();
+  const items=document.getElementById("items").value.trim();
+  const total=document.getElementById("total").value.trim();
+  const paid=document.getElementById("paid").value==="true";
+  if(!name||!items){alert("Add at least the customer name and order details.");return}
+  const x=data(), id=nextId();
+  x.unshift({id,name,phone,items,total,paid,status:paid?"paid":"paid",createdAt:new Date().toISOString()});
+  save(x);
+  ["name","phone","items","total"].forEach(i=>document.getElementById(i).value="");
+  alert("Created "+id+". "+(paid?"Tracking is active.":"Mark it paid before giving the tracking number to the customer."));
+}
+function setStatus(id,s){const x=data(),o=x.find(v=>v.id===id);if(!o)return;if(!o.paid){alert("Mark this order as paid first.");return}o.status=s;save(x)}
+function togglePaid(id){const x=data(),o=x.find(v=>v.id===id);if(!o)return;o.paid=!o.paid;if(o.paid&&!o.status)o.status="paid";save(x)}
+function removeOrder(id){if(!confirm("Delete "+id+"?"))return;save(data().filter(o=>o.id!==id))}
+function render(){
+  const root=document.getElementById("orders"), x=data();
+  if(!x.length){root.innerHTML='<div class="empty">No test orders yet. Create one above.</div>';return}
+  root.innerHTML=x.map(o=>`<article class="order">
+    <div class="top"><div><b>Order #${esc(o.id)}</b><br><small>${esc(o.name)}${o.phone?" · "+esc(o.phone):""}</small></div><span class="badge ${o.paid?"":"unpaid"}">${o.paid?"PAID ✓":"UNPAID"}</span></div>
+    <div class="details">${esc(o.items||"")}<br><b>${esc(o.total||"")}</b></div>
+    <div class="buttons">
+      <button onclick="togglePaid('${o.id}')">${o.paid?"Mark unpaid":"Mark paid"}</button>
+      ${statuses.slice(1).map(s=>`<button class="${o.status===s[0]?"active":""}" onclick="setStatus('${o.id}','${s[0]}')">${s[1]}</button>`).join("")}
+      <a href="track.html?order=${encodeURIComponent(o.id)}" style="padding:10px 12px;background:#fff;border-radius:999px;text-decoration:none;font-weight:800;color:inherit">Preview tracker</a>
+    </div>
+    <button class="danger" onclick="removeOrder('${o.id}')">Delete order</button>
+  </article>`).join("");
+}
+render();
+</script>
+</body>
+</html>
